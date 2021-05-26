@@ -16,7 +16,8 @@ python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml 
 ```
 
 ## Evaluation
+The checkpoints for the experiments reported in our paper can be found [here](http://csr.bu.edu/ftp/recycle/models/). Please use the following code to evaluate the model on our dataset:
 ```
 # evaluate the pretrained deeplab ZeroWaste:
-python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot /path/to/zerowaste/data/  --eval-only OUTPUT_DIR /deeplab/outputs/results/ --MODEL.WEIGHTS deeplab/outputs/model_final.pth
+python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot /path/to/zerowaste/data/  --eval-only OUTPUT_DIR /deeplab/outputs/results/ --MODEL.WEIGHTS path/to/checkpoint.pth
 ```
