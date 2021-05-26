@@ -30,7 +30,7 @@ SOLVER:
   MAX_ITER: 10000 # total number of iterations
   BASE_LR: 0.0025 # starting LR
   LR_SCHEDULER_NAME: "WarmupMultiStepLR" # See detectron2/solver/build.py for LR scheduler options
-  MOMENTUM: 0.9 # try also 0.93, 0.95
+  MOMENTUM: 0.9 
   NESTEROV: False
   WEIGHT_DECAY: 0.0001
   GAMMA: 0.1
@@ -38,5 +38,4 @@ SOLVER:
   CHECKPOINT_PERIOD: 1000 # Save a checkpoint after every this number of iterations
   IMS_PER_BATCH: 8  # batch size
 
-OUTPUT_DIR: "/scratch2/dinka/recycling_baselines/maskrcnn/outputs/" # modify to add a subfolder for each experiment
-
+OUTPUT_DIR: "./outputs/"

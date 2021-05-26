@@ -37,6 +37,5 @@ Please cite our paper:
   howpublished = {arXiv preprint},
   year =         {2021}
 }
-
 ```
 
