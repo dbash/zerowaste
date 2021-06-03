@@ -55,6 +55,17 @@ The trained model checkpoints can be found [here](http://csr.bu.edu/ftp/recycle/
 python zerowaste_inference.py --config config.json --model best_model.pth --images path/to/images/
 ```
 
+## Generation of CAMs
+We used the [official implementation](https://github.com/eclique/RISE) of [RISE](https://arxiv.org/abs/1806.07421) by Vitali Petsiuk. 
+### Requirements
+* python 3.7
+* pytorch 1.8
+* torchvision 
+* skimage
+
+Please download the ZeroWaste-w dataset for binary classification. A pretrained binary classifier used in our experiments can be found [here](http://csr.bu.edu/ftp/recycle/models/binary_classification/). [This notebook](rise/before_after_cams.ipynb) illustrates how the CAMs can be generated for outr dataset.
+
+
 ## Citation
 Please cite our paper: 
 ```
