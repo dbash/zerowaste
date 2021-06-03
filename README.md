@@ -6,6 +6,7 @@ This is the official repository of the ZeroWaste project [arxiv](http://a.com). 
 
 ## Supervised experiments
 ### Requirements
+* Python 3.8
 * pytorch 1.8
 * [Detectron2](https://github.com/facebookresearch/detectron2) (please see the [official installation guide](https://detectron2.readthedocs.io/en/latest/tutorials/install.html))
 
@@ -44,7 +45,8 @@ Please download and unzip the ZeroWaste-f and ZeroWaste-s for the semi-zupervise
 To train the model from scratch with the hyperparameters used in our experiments, please download the initial checkpoint [here](https://github.com/yassouali/CCT/releases/download/v0.1/3x3resnet50-imagenet.pth) and put it to ```cct/models/backbones/pretrained/``` and use the following command:
 
 ```
-python train_zerowaste.py -c configs/zerowaste_config.json
+cd cct
+python train_zerowaste.py -c configs/*needed_config*.json
 ```
 This command works for the semi-supervised setup, for the supervised experiment use ```configs/zerowaste_config_sup.json``` instead. 
 
@@ -52,7 +54,8 @@ This command works for the semi-supervised setup, for the supervised experiment 
 The trained model checkpoints can be found [here](http://csr.bu.edu/ftp/recycle/models/cct/). The following command runs inference on the given data: 
 
 ```
-python zerowaste_inference.py --config config.json --model best_model.pth --images path/to/images/
+cd cct
+python zerowaste_inference.py --config configs/*needed_config*.json --model path/to/checkpoint.pth --images /path/to/images/
 ```
 
 ## Generation of CAMs
