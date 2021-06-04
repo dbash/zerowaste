@@ -1,8 +1,8 @@
 # ZeroWaste: Towards Automated Waste Recycling
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4899927.svg)](https://doi.org/10.5281/zenodo.4899927) <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" />
 ![Image](images/recycling_figure_1_v3.png)
 This is the official repository of the ZeroWaste project [arxiv](http://a.com). Our ZeroWaste dataset distributed under 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"></a><br /><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" /></a>  can be found [here](http://csr.bu.edu/ftp/recycle/).
+<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"></a><br /><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License </a>  can be found [here](https://zenodo.org/record/4899927).
 
 ## Supervised experiments
 ### Requirements
