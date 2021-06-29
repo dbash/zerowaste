@@ -1,0 +1,8 @@
+1. Train an image classifier for generating CAMs
+CUDA_VISIBLE_DEVICES=0,1,2 python3 train_classification_with_puzzle.py --architecture resnest101 --re_loss_option masking --re_loss L1_Loss --alpha_schedule 0.50 --alpha 4.00 --tag ResNeSt101@Puzzle@optimal --data_dir ./data/VOCdevkit/VOC2012
+
+view sizes of all files:
+du -h --max-depth=1 ./
+
+view sizes of all files including hidden files:
+du -sch .[!.]* * |sort -h

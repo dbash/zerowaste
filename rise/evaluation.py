@@ -5,7 +5,7 @@ from scipy.ndimage.filters import gaussian_filter
 from utils import *
 
 HW = 224 * 224 # image area
-n_classes = 1000
+n_classes = 2
 
 def gkern(klen, nsig):
     """Returns a Gaussian kernel array.

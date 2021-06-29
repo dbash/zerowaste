@@ -16,6 +16,8 @@ To train the supervised methods (DeeplabV3+ or Mask R-CNN), use the command belo
 # train deeplab on ZeroWaste data
 python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot /path/to/zerowaste/data/ (optional) --resume OUTPUT_DIR /deeplab/outputs/*experiment_name* (optional) --MODEL.WEIGHTS /path/to/checkpoint.pth
 
+python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot ./data --resume OUTPUT_DIR /deeplab/outputs/test_me --MODEL.WEIGHTS ./deeplab/checkpoints
+
 # train Mask R-CNN on ZeroWaste\TACO-zerowaste data
 python maskrcnn/train_net.py --config-file maskrcnn/configs/*config*.yaml (optional, only use if trained on TACO-zerowaste) --taco --dataroot /path/to/zerowaste/data/ (optional) --resume OUTPUT_DIR /maskrcnn/outputs/*experiment_name* (optional) --MODEL.WEIGHTS /path/to/checkpoint.pth
 ```
@@ -47,6 +49,8 @@ To train the model from scratch with the hyperparameters used in our experiments
 ```
 cd cct
 python train_zerowaste.py -c configs/*needed_config*.json
+
+########### python3 train_zerowaste.py -c configs/zerowaste_config.json
 ```
 This command works for the semi-supervised setup, for the supervised experiment use ```configs/zerowaste_config_sup.json``` instead. 
 
@@ -57,6 +61,8 @@ The trained model checkpoints can be found [here](http://csr.bu.edu/ftp/recycle/
 cd cct
 python zerowaste_inference.py --config configs/*needed_config*.json --model path/to/checkpoint.pth --images /path/to/images/
 ```
+
+####### python3 zerowaste_inference.py --config config.json --model checkpoint.pth --images ../data/zerowaste-f/test
 
 ## Generation of CAMs
 We used the [official implementation](https://github.com/eclique/RISE) of [RISE](https://arxiv.org/abs/1806.07421) by Vitali Petsiuk. 
