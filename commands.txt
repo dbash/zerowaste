@@ -9,3 +9,7 @@ du -sch .[!.]* * |sort -h
 
 
 git rm --cached -r .
+git commit --amend -CHEAD
+git push origin_osama HEAD:master
+
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch rise/binary_classifier.pt rise/binary_classifier_2.pt cct/models/backbones/pretrained/3x3resnet50-imagenet.pth rise/my_explanations.npy'
