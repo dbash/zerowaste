@@ -137,3 +137,6 @@ venv.bak/
 *.exe
 *.out
 *.app
+
+*.pt
+*.npy

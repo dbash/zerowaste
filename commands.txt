@@ -6,3 +6,6 @@ du -h --max-depth=1 ./
 
 view sizes of all files including hidden files:
 du -sch .[!.]* * |sort -h
+
+
+git rm --cached -r .
