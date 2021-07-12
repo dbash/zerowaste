@@ -1,0 +1,13 @@
+experiments/
+__pycache__/
+
+analysis/
+examples/
+
+results/
+results_*/
+
+*.tgz
+
+CopyrightReceipt.pdf
+demo.py
