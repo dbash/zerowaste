@@ -77,7 +77,12 @@ git commands:
 git rm --cached -r .
 git commit --amend -CHEAD
 git push origin_osama HEAD:master
-git filter-branch --index-filter 'git rm --cached --ignore-unmatch rise/binary_classifier.pt rise/binary_classifier_2.pt cct/models/backbones/pretrained/3x3resnet50-imagenet.pth rise/my_explanations.npy'
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch PuzzleCAM/resnest101-22405ba7.pth PuzzleCAM/resnet101-5d3b4d8f.pth'
 
 git show remote origin url:
 git remote -v
+
+get rid of arrowed directory:
+1- remote subdirectory/.git directory
+2- git rm --cached subdirectory
+3- 
