@@ -140,3 +140,9 @@ venv.bak/
 
 *.pt
 *.npy
+*.pth
+
+*.zip
+*.pdf
+*.xlsx
+*.pkl
