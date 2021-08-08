@@ -95,7 +95,7 @@ def validate(current_epoch):
     with torch.no_grad():
         for idx, dat in tqdm(enumerate(val_loader)):
             #img, label, sal_map, gt_map, _ = dat
-            img, label, gt_map = dat
+            img, label, gt_map, _ = dat
             
             B, _, H, W = img.size()
             
@@ -107,7 +107,7 @@ def validate(current_epoch):
 
             """ classification loss """
             loss = F.multilabel_soft_margin_loss(logit, label)
-            print('loss is: ', loss)
+            #print('loss is: ', loss)
             cls_acc_matrix.update(logit, label)
 
             val_loss.update(loss.data.item(), img.size()[0])
@@ -126,8 +126,8 @@ def validate(current_epoch):
             #pred_map[:, 0, :, :] = (1. - sal_map) # background cue
             pred_map = pred_map.argmax(1)
             
-            print ('pred label: ', logit[0])
-            print ('gt label: ', label[0])
+            #print ('pred label: ', logit[0])
+            #print ('gt label: ', label[0])
             #gt_map = gt_map.argmax(1)
             """ print('cam shape is: ', cam.shape)
             print('pred_map shape is: ', pred_map.shape)
@@ -254,10 +254,10 @@ if __name__ == '__main__':
     for current_epoch in range(1, args.epoch+1):
         
         train(current_epoch)
-        #score = validate(current_epoch)
+        score = validate(current_epoch)
         
         """ save checkpoint """
-        """ if score > best_score:
+        if score > best_score:
             best_score = score
             print('\nSaving state, epoch : %d , mIoU : %.4f \n' % (current_epoch, score))
             state = {
@@ -268,4 +268,4 @@ if __name__ == '__main__':
                 'miou': score,
             }
             model_file = os.path.join(args.save_folder, 'best.pth')
-            torch.save(state, model_file) """
+            torch.save(state, model_file)

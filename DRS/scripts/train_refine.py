@@ -18,7 +18,7 @@ from torch.autograd import Variable
 from models.vgg_refine import vgg16
 from utils.my_optim import reduce_lr
 from utils.avgMeter import AverageMeter
-from utils.LoadData_refine import train_data_loader, valid_data_loader
+from utils.LoadData_refine import train_data_loader, valid_data_loader, ZeroWaste_data_loaders
 from utils.Metrics import Cls_Accuracy, IOUMetric
 from utils.util import output_visualize
 from tqdm import trange, tqdm
@@ -30,10 +30,10 @@ def get_arguments():
     parser.add_argument("--img_dir", type=str, default='', help='Directory of training images')
     parser.add_argument("--train_list", type=str, default='VOC2012_list/train_aug_cls.txt')
     parser.add_argument("--test_list", type=str, default='VOC2012_list/train_cls.txt')
-    parser.add_argument("--batch_size", type=int, default=5)
+    parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--input_size", type=int, default=384)
     parser.add_argument("--crop_size", type=int, default=320)
-    parser.add_argument("--num_classes", type=int, default=20)
+    parser.add_argument("--num_classes", type=int, default=2)
     parser.add_argument("--lr", type=float, default=0.0001)
     parser.add_argument("--decay_points", type=str, default='5,10')
     parser.add_argument("--epoch", type=int, default=15)
@@ -62,7 +62,7 @@ def validate(current_epoch):
 
     print('\nvalidating ... ', flush=True, end='')
     
-    mIOU = IOUMetric(num_classes=21)
+    mIOU = IOUMetric(num_classes=2)
     
     val_loss = AverageMeter()
     
@@ -73,7 +73,7 @@ def validate(current_epoch):
     with torch.no_grad():
         for idx, dat in tqdm(enumerate(val_loader)):
                 
-            img, label, sal_map, gt_map, att_map, img_name = dat
+            img, label, gt_map, att_map, img_name = dat
             
             B, _, H, W = img.size()
             
@@ -90,7 +90,7 @@ def validate(current_epoch):
             refined_map = refined_map.cpu().detach().numpy()
             gt_map = gt_map.cpu().detach().numpy()
             att_map = att_map.cpu().detach().numpy()
-            sal_map = sal_map.cpu().detach().numpy()
+            #sal_map = sal_map.cpu().detach().numpy()
 
             """ segmentation label generation """
             #refined_map = (refined_map - refined_map.min()) / (refined_map.max() - refined_map.min() + 1e-5)
@@ -98,7 +98,7 @@ def validate(current_epoch):
             bg = np.zeros((B, 1, H, W), dtype=np.float32)
             pred_map = np.concatenate([bg, refined_map], axis=1)  # [B, 21, H, W]
 
-            pred_map[:, 0, :, :] = (1. - sal_map) # background cue
+            #pred_map[:, 0, :, :] = (1. - sal_map) # background cue
             pred_map = pred_map.argmax(1)
 
             mIOU.add_batch(pred_map, gt_map)
@@ -138,7 +138,7 @@ def train(current_epoch):
     res = reduce_lr(args, optimizer, current_epoch)
 
     for idx, dat in enumerate(train_loader):
-        img, label, sal_map, gt_map, att_map, img_name = dat
+        img, label, gt_map, att_map, img_name = dat
         
         label = label.to('cuda', non_blocking=True)
         img = img.to('cuda', non_blocking=True)
@@ -177,7 +177,7 @@ if __name__ == '__main__':
     nGPU = torch.cuda.device_count()
     print("start training the refinement network , nGPU = %d" % nGPU)
     
-    args.batch_size *= nGPU
+    #args.batch_size *= nGPU
     args.num_workers *= nGPU
                                    
     print('Running parameters:\n', args)
@@ -190,8 +190,7 @@ if __name__ == '__main__':
 
     writer = SummaryWriter(log_dir=args.logdir)
     
-    train_loader = train_data_loader(args)
-    val_loader = valid_data_loader(args)
+    train_loader, val_loader, _ = ZeroWaste_data_loaders(args)
     print('# of train dataset:', len(train_loader) * args.batch_size)
     print('# of valid dataset:', len(val_loader) * args.batch_size)
     print()

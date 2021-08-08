@@ -13,7 +13,7 @@ model_urls = {'vgg16': 'https://download.pytorch.org/models/vgg16-397923af.pth'}
     
 class VGG(nn.Module):
 
-    def __init__(self, features, num_classes=20, init_weights=True):
+    def __init__(self, features, num_classes=2, init_weights=True):
         
         super(VGG, self).__init__()
         

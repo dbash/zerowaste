@@ -271,7 +271,16 @@ class DatasetFolder(VisionDataset):
         sample = Image.open(path)
 
         path_org, target_org = self.samples_org[index]
+
+        """ if path.find('seg/val') != -1:
+            path_org = path.replace('seg/val', 'org')
+        elif path.find('seg/test') != -1:
+            path_org = path.replace('seg/test', 'org') """
+
         sample_org = self.loader(path_org)
+
+        #print(path)
+        #print(path_org)
 
         if self.transform is not None:
             #sample = self.transform(sample)
@@ -279,19 +288,12 @@ class DatasetFolder(VisionDataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
             target_org = self.target_transform(target_org)
-
-            if (target != target_org):
-                print('targets are not equal!!!!!!!!!!!!!!!!!!!')
-                quit()
         
         sample = self.map_transform(sample)
         
         sample = (sample > 50)
-            
-        
-        
 
-        return sample_org, target, sample
+        return sample_org, target, sample, path
 
 
     def __len__(self) -> int:
@@ -420,7 +422,7 @@ def ZeroWaste_data_loaders(args):
     target_transform = lambda x: torch.nn.functional.one_hot(torch.tensor(x, dtype=torch.int64), 2)
 
     org_root = args.img_dir + "/org"
-    seg_root = args.img_dir + "/seg"
+    
 
     dataset = datasets.ImageFolder(root = org_root, transform=tsfm_train,
                                 target_transform=target_transform)
@@ -466,7 +468,8 @@ def ZeroWaste_data_loaders(args):
     #val_loader = DataLoader(img_test, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
 
 
-    dataset = ZeroWasteDataset(root = seg_root,root_org=org_root, mode='valid',crop_size=crop_size,transform=tsfm_test,
+    seg_root_val = args.img_dir + "/seg/val"
+    dataset = ZeroWasteDataset(root = seg_root_val,root_org=org_root, mode='valid',crop_size=crop_size,transform=tsfm_test,
                               target_transform=target_transform)
 
     #dataset_size = len(dataset)
@@ -479,7 +482,9 @@ def ZeroWaste_data_loaders(args):
     
     val_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
 
-    dataset = ZeroWasteDataset(root = seg_root,root_org=org_root, mode='test',crop_size=crop_size,transform=tsfm_test,
+
+    seg_root_test = args.img_dir + "/seg/val_test"
+    dataset = ZeroWasteDataset(root = seg_root_test,root_org=org_root, mode='test',crop_size=crop_size,transform=tsfm_test,
                               target_transform=target_transform)
 
     test_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)

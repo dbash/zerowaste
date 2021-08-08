@@ -1,0 +1,69 @@
+rigid_plastic >>> 1
+Other plastic bottle 4
+Clear plastic bottle 5
+Plastic bottle cap 7
+Disposable plastic cup 21
+Other plastic cup 24
+Plastic lid 27
+Other plastic 29
+Spread tub 43
+Tupperware 44
+Disposable food container 45
+Foam food container 46
+Other plastic container 47
+Plastic utensils 49
+Squeezable tube 54
+Plastic straw 55
+Paper straw 56
+
+cardboard >>> 2
+Toilet tube 13
+Other carton 14
+Egg carton 15
+Drink carton 16
+Corrugated carton 17
+Meal carton 18
+Pizza box 19
+Paper cup 20
+Foam cup 22
+
+metal >>> 3
+Aluminium foil 0
+Battery 1
+Aluminium blister pack 2
+Metal bottle cap 8
+Food Can 10
+Aerosol 11
+Drink can 12
+Metal lid 28
+Pop tab 50
+Scrap metal 52
+
+soft_plastic >>> 4
+Plastified paper bag 35
+Plastic film 36
+Six pack rings 37
+Garbage bag 38
+Other plastic wrapper 39
+Single-use carrier bag 40
+Polypropylene bag 41
+Crisp packet 42
+Plastic glooves 48
+Unlabeled litter 58
+
+to be removed:
+Glass bottle 6
+Broken glass 9
+Glass cup 23
+Carded blister pack 3
+Food waste 25
+Glass jar 26
+Magazine paper 30
+Tissues 31
+Wrapping paper 32
+Normal paper 33
+Paper bag 34
+Rope & strings 51
+Shoe 53
+Styrofoam piece 57
+Cigarette 59

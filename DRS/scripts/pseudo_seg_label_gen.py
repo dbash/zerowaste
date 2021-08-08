@@ -12,7 +12,7 @@ import torch.nn.functional as F
 from models.vgg_refine import vgg16
 #from models.vgg import vgg16
 from utils.Metrics import IOUMetric
-from utils.LoadData import test_data_loader
+from utils.LoadData import test_data_loader, ZeroWaste_data_loaders
 from utils.decode import get_palette
 
 parser = argparse.ArgumentParser(description='DRS pytorch implementation')
@@ -21,11 +21,11 @@ parser.add_argument("--crop_size", type=int, default=320)
 parser.add_argument("--img_dir", type=str, default="/data/DB/VOC2012/")
 parser.add_argument("--test_list", type=str, default='VOC2012_list/train_aug_cls.txt')
 parser.add_argument("--batch_size", type=int, default=1)
-parser.add_argument("--num_classes", type=int, default=20)
+parser.add_argument("--num_classes", type=int, default=2)
 parser.add_argument("--num_workers", type=int, default=2)
 parser.add_argument("--checkpoint", type=str)
 parser.add_argument("--delta", type=float, default=0, help='set 0 for the learnable DRS')
-parser.add_argument("--alpha", type=float, default=0.20)
+parser.add_argument("--alpha", type=float, default=0.05)
 
 args = parser.parse_args()
 print(args)
@@ -45,19 +45,19 @@ model.load_state_dict(ckpt['model'], strict=True)
 
 
 """ dataloader """
-data_loader = test_data_loader(args)
+_, _, data_loader = ZeroWaste_data_loaders(args)
 palette = get_palette()
 
 for idx, dat in enumerate(data_loader):
     print("[%03d/%03d]" % (idx, len(data_loader)), end="\r")
 
-    img, label, sal_map, _, img_name = dat
+    img, label, sal_map, img_name = dat
     
     label = label.cuda()
     img = img.cuda()
 
     _, H, W = sal_map.shape
-    localization_maps = np.zeros((20, H, W), dtype=np.float32)
+    localization_maps = np.zeros((2, H, W), dtype=np.float32)
 
     """ single-scale testing """
     for s in [256, 320, 384]:
@@ -66,15 +66,28 @@ for idx, dat in enumerate(data_loader):
         #_, cam = model(_img, label, size=(H, W))
         cam = model(_img, label, size=(H, W))
 
+        
+        
+
         """ obtain CAMs """
         cam = cam[0].cpu().detach().numpy()
         localization_maps = np.maximum(localization_maps, cam)
 
+    #quit()
     sal_map = sal_map[0].detach().numpy()
     img_name = img_name[0].split("/")[-1].split(".")[0]
     
     """ segmentation label generation """
+    """ print()
+    print(localization_maps.max())
+    print() """
+
     localization_maps[localization_maps < args.alpha] = 0 # object cue
+    
+    """ print()
+    print(localization_maps.max())
+    print()
+    quit() """
 
     bg = np.zeros((1, H, W), dtype=np.float32)
     pred_map = np.concatenate([bg, localization_maps], axis=0)  # [21, H, W]

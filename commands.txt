@@ -1,7 +1,46 @@
-1. Train an image classifier for generating CAMs
-CUDA_VISIBLE_DEVICES=0,1,2 python3 train_classification_with_puzzle.py --architecture resnest101 --re_loss_option masking --re_loss L1_Loss --alpha_schedule 0.50 --alpha 4.00 --tag ResNeSt101@Puzzle@optimal --data_dir /research/axns2/mabdelfa/pascal-voc/data/VOCdevkit/VOC2012/
+/research/axns2/mabdelfa/VOC2012/
 
-/research/axns2/mabdelfa/pascal-voc/data/VOCdevkit/VOC2012/
+1. Train an image classifier for generating CAMs
+CUDA_VISIBLE_DEVICES=0,1,2 python3 train_classification_with_puzzle.py --architecture resnest101 \
+    --re_loss_option masking --re_loss L1_Loss --alpha_schedule 0.50 --alpha 4.00 \
+    --tag ResNeSt101@Puzzle@optimal --data_dir /research/axns2/mabdelfa/dataset_conversion/
+
+CUDA_VISIBLE_DEVICES=0 python3 inference_classification.py --architecture resnest101 \
+    --tag ResNeSt101@Puzzle@optimal --domain train_aug \
+    --data_dir /research/axns2/mabdelfa/dataset_conversion \
+
+python3 make_affinity_labels.py --experiment_name ResNeSt101@Puzzle@optimal@train@scale=0.5,1.0,1.5,2.0 \
+    --domain train_aug --fg_threshold 0.40 --bg_threshold 0.10 \
+    --data_dir /research/axns2/mabdelfa/dataset_conversion/
+
+CUDA_VISIBLE_DEVICES=0,1,2 python3 train_affinitynet.py --architecture resnest101 \
+    --tag AffinityNet@ResNeSt-101@Puzzle \
+    --label_name ResNeSt101@Puzzle@optimal@train@scale=0.5,1.0,1.5,2.0@aff_fg=0.40_bg=0.10 \
+    --data_dir /research/axns2/mabdelfa/dataset_conversion/
+
+CUDA_VISIBLE_DEVICES=0 python3 inference_rw.py --architecture resnest101 \
+    --model_name AffinityNet@ResNeSt-101@Puzzle \
+    --cam_dir ResNeSt101@Puzzle@optimal@train@scale=0.5,1.0,1.5,2.0 \
+    --domain train_aug --data_dir /research/axns2/mabdelfa/dataset_conversion/
+
+python3 make_pseudo_labels.py --experiment_name AffinityNet@ResNeSt-101@Puzzle@train@beta=10@exp_times=8@rw \
+    --domain train_aug --threshold 0.35 --crf_iteration 1 --data_dir /research/axns2/mabdelfa/dataset_conversion/
+
+CUDA_VISIBLE_DEVICES=0,1,2 python3 train_segmentation.py --backbone resnest101 --mode fix --use_gn True \
+    --tag DeepLabv3+@ResNeSt-101@Fix@GN \
+    --label_name AffinityNet@ResNeSt-101@Puzzle@train@beta=10@exp_times=8@rw@crf=1 \
+    --data_dir /research/axns2/mabdelfa/dataset_conversion/
+
+CUDA_VISIBLE_DEVICES=0 python3 inference_segmentation.py \
+    --backbone resnest101 --mode fix --use_gn True \
+    --tag DeepLabv3+@ResNeSt-101@Fix@GN --scale 0.5,1.0,1.5,2.0 --iteration 10 \
+    --data_dir /research/axns2/mabdelfa/dataset_conversion/
+
+python3 evaluate.py --experiment_name DeepLabv3+@ResNeSt-101@Fix@GN@val@scale=0.5,1.0,1.5,2.0@iteration=10 \
+    --domain val --gt_dir /research/axns2/mabdelfa/dataset_conversion/SegmentationClass
+
+python3 evaluate.py --experiment_name DeepLabv3+@ResNeSt-101@Fix@GN@val@scale=0.5,1.0,1.5,2.0@iteration=10 \
+    --domain val --mode png
 
 view sizes of all files:
 du -h --max-depth=1 ./
@@ -19,12 +58,10 @@ cp -t /path/to/dst/ file1 file2 file3
 move multiple files:
 mv -t dest_path file1 file2 file3
 
-
-
-
 https://drive.google.com/drive/folders/1_ik8n5Q4C77X-aIfKiqidFEDQ6zY9JNM?usp=sharing
 
-$ wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1_ik8n5Q4C77X-aIfKiqidFEDQ6zY9JNM' -O SegmentationClassAug
+$ wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1_ik8n5Q4C77X-aIfKiqidFEDQ6zY9JNM' \
+    -O SegmentationClassAug
 
 To extract .tar.gz files:
 tar -xf archive.tar.gz
@@ -36,9 +73,6 @@ To start jupyter Notebook:
 jupyter notebook --ip=127.0.0.1
 
 Fiftyone convert dataset formats:
-fiftyone convert \
-    --input-dir cifar10 --input-type fiftyone.types.FiftyOneImageClassificationDataset \
-    --output-dir cifar10-dir-tree --output-type fiftyone.types.ImageClassificationDirectoryTree
 
 To download google drive directory:
 ./gdrive download --recursive '<folderID>'
@@ -52,19 +86,21 @@ INPUT_DIR=$(fiftyone zoo datasets find cifar10 --split test)
 OUTPUT_DIR=/tmp/fiftyone/cifar10-dir-tree
 
 fiftyone convert \
-    --input-dir /research/axns2/mabdelfa/zerowaste/zerowaste-f/test --input-type fiftyone.types.COCODetectionDataset  \
-    --output-dir /research/axns2/mabdelfa/dataset_conversion --output-type fiftyone.types.VOCDetectionDataset
+    --input-dir /research/axns2/mabdelfa/zerowaste/zerowaste-w/org \
+    --input-type fiftyone.types.ImageClassificationDirectoryTree  \
+    --output-dir /research/axns2/mabdelfa/before_after_voc_format \
+    --output-type fiftyone.types.VOCDetectionDataset
 
 
 CUDA_VISIBLE_DEVICES=0,1 python scripts/zerowaste_drs_binary_cls.py \
     --img_dir=/research/axns2/mabdelfa/zerowaste/zerowaste-w \
     --lr=0.001 \
-    --epoch=1 \
+    --epoch=3 \
     --decay_points='5,10' \
     --delta=0 \
     --logdir=logs/DRS_learnable \
     --save_folder=checkpoints/DRS_learnable \
-    --show_interval=50
+    --show_interval=10
 
 pytorch for cuda 11.3:
 pip install --pre torch torchvision torchaudio -f https://download.pytorch.org/whl/nightly/cu113/torch_nightly.html
@@ -77,7 +113,8 @@ git commands:
 git rm --cached -r .
 git commit --amend -CHEAD
 git push origin_osama HEAD:master
-git filter-branch --index-filter 'git rm --cached --ignore-unmatch PuzzleCAM/resnest101-22405ba7.pth PuzzleCAM/resnet101-5d3b4d8f.pth'
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch PuzzleCAM/resnest101-22405ba7.pth \
+    PuzzleCAM/resnet101-5d3b4d8f.pth'
 
 git show remote origin url:
 git remote -v
@@ -89,4 +126,44 @@ get rid of arrowed directory:
 4- git commit -m "comment"
 5- git push -u origin_osama master
 
+save unstaged changes for later:
 git stash save 'will come back to continue working later on'
+
+
+convert_annotation mscoco_segmentation \
+    --annotation_file /research/axns2/mabdelfa/coco/annotations/instances_val2017.json
+    --semantic_only True \
+    --masks_dir /research/axns2/mabdelfa/sem_conv \
+    --convert_COCO_to_VOC_labels True
+
+
+# Train a new model starting from pre-trained COCO weights
+python3 coco.py train --dataset=/research/axns2/mabdelfa/coco/ --model=coco
+
+# Train a new model starting from ImageNet weights
+python3 samples/coco/coco.py train --dataset=/research/axns2/mabdelfa/coco/ --model=imagenet
+
+# Continue training a model that you had trained earlier
+python3 samples/coco/coco.py train --dataset=/research/axns2/mabdelfa/coco/ --model=/path/to/weights.h5
+
+# Continue training the last model you trained. This will find
+# the last trained weights in the model directory.
+python3 samples/coco/coco.py train --dataset=/research/axns2/mabdelfa/coco/ --model=last
+
+
+python train_SEAM.py --voc12_root /research/axns2/mabdelfa/dataset_conversion \
+    --weights resnet38_SEAM.pth \
+    --session_name zerowaste
+
+python infer_SEAM.py --weights zerowaste.pth \
+    --infer_list voc12/train_aug.txt \
+    --out_cam ./cam --out_crf ./crf \
+    --voc12_root /research/axns2/mabdelfa/dataset_conversion
+
+
+python make_cls_labels.py --voc12_root /research/axns2/mabdelfa/dataset_conversion
+
+python main.py --mode='train' \
+    --train_path='/research/axns2/mabdelfa/zerowaste_msra_format/image' \
+    --label_path='/research/axns2/mabdelfa/zerowaste_msra_format/annotations' \
+    --batch_size=8 --visdom=False --train_file='/research/axns2/mabdelfa/zerowaste_msra_format/train_cvpr2013.txt'

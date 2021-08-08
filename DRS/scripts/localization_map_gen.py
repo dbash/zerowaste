@@ -10,13 +10,13 @@ import torch.nn.functional as F
 
 from models.vgg import vgg16
 from utils.decode import decode_seg_map_sequence
-from utils.LoadData import test_data_loader
+from utils.LoadData import test_data_loader, ZeroWaste_data_loaders
 from utils.decode import decode_segmap
 
 parser = argparse.ArgumentParser(description='DRS pytorch implementation')
 parser.add_argument("--input_size", type=int, default=320)
 parser.add_argument("--crop_size", type=int, default=320)
-parser.add_argument("--img_dir", type=str, default="/data/DB/VOC2012/")
+parser.add_argument("--img_dir", type=str, default="/research/axns2/mabdelfa/zerowaste/zerowaste-w")
 parser.add_argument("--test_list", type=str, default='VOC2012_list/train_aug_cls.txt')
 parser.add_argument("--batch_size", type=int, default=1)
 parser.add_argument("--num_classes", type=int, default=2)
@@ -41,18 +41,19 @@ model.load_state_dict(ckpt['model'], strict=True)
 
 
 """ dataloader """
-data_loader = test_data_loader(args)
+#data_loader = test_data_loader(args)
+_, _, data_loader = ZeroWaste_data_loaders(args)
 
 for idx, dat in enumerate(data_loader):
     print("[%04d/%04d]" % (idx, len(data_loader)), end="\r")
 
-    img, label, _, _, img_name = dat
+    img, label, _, img_name = dat
     
     label = label.cuda()
     img = img.cuda()
 
     H = W = args.crop_size
-    localization_maps = np.zeros((20, H, W), dtype=np.float32)
+    localization_maps = np.zeros((2, H, W), dtype=np.float32)
         
     # multi-scale testing
     for s in [256, 320, 384]:
@@ -62,7 +63,9 @@ for idx, dat in enumerate(data_loader):
 
         cam = cam[0].detach().cpu().numpy()
         localization_maps = np.maximum(localization_maps, cam)
-        
+
+    
+    
     img_name = img_name[0].split("/")[-1].split(".")[0]
     
     """ save localization map """
