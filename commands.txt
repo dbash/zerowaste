@@ -120,7 +120,7 @@ git show remote origin url:
 git remote -v
 
 get rid of arrowed directory:
-1- remote subdirectory/.git directory
+1- remove subdirectory/.git directory
 2- git rm --cached subdirectory
 3- git add .
 4- git commit -m "comment"
