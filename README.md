@@ -1,7 +1,7 @@
-# ZeroWaste: Towards Automated Waste Recycling
+# ZeroWaste: Towards Deformable Object Segmentation in Extreme Clutter
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4899927.svg)](https://doi.org/10.5281/zenodo.4899927) <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" />
 ![Image](images/recycling_figure_1_v3.png)
-This is the official repository of the ZeroWaste project [arxiv](http://a.com). Our ZeroWaste dataset distributed under 
+This is the official repository of the ZeroWaste project [arxiv](https://arxiv.org/abs/2106.02740). Our ZeroWaste dataset distributed under 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"></a><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License </a>  can be found [here](https://zenodo.org/record/4899927).
 
 ## Supervised experiments
@@ -16,10 +16,11 @@ To train the supervised methods (DeeplabV3+ or Mask R-CNN), use the command belo
 # train deeplab on ZeroWaste data
 python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot /path/to/zerowaste/data/ (optional) --resume OUTPUT_DIR /deeplab/outputs/*experiment_name* (optional) --MODEL.WEIGHTS /path/to/checkpoint.pth
 
-python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot ./data --resume OUTPUT_DIR /deeplab/outputs/test_me --MODEL.WEIGHTS ./deeplab/checkpoints
-
 # train Mask R-CNN on ZeroWaste\TACO-zerowaste data
 python maskrcnn/train_net.py --config-file maskrcnn/configs/*config*.yaml (optional, only use if trained on TACO-zerowaste) --taco --dataroot /path/to/zerowaste/data/ (optional) --resume OUTPUT_DIR /maskrcnn/outputs/*experiment_name* (optional) --MODEL.WEIGHTS /path/to/checkpoint.pth
+
+# train ReCo on ZeroWasteAug data
+python reco_aug/train_sup.py --dataset zerowaste --num_labels 0 --seed 1
 ```
 
 ### Evaluation
@@ -29,57 +30,63 @@ The checkpoints for the experiments reported in our paper can be found [here](ht
 python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot /path/to/zerowaste-or-taco/data/  --eval-only OUTPUT_DIR /deeplab/outputs/results/ --MODEL.WEIGHTS path/to/checkpoint.pth
 
 # evaluate the pretrained Mask R-CNN on ZeroWaste\TACO-zerowaste:
-python deeplab/train_net.py --config-file deeplab/configs/*config*.yaml (optional, only use if evaluated on TACO-zerowaste) --taco --dataroot /path/to/zerowaste-or-taco/data/  --eval-only OUTPUT_DIR /maskrcnn/outputs/*experiment_name*/ --MODEL.WEIGHTS path/to/checkpoint.pth
+python deeplab/train_net.py --config-file deeplab/configs/*config*.yaml (optional, only use if evaluated on TACO-zerowaste) --taco --dataroot /path/to/zerowaste-or-taco/data/  --eval-only OUTPUT_DIR /maskrcnn/outputs/*ex
+
+# evaluate the pretrained ReCo-sup on ZeroWasteAug
+python reco_aug/test_sup.py --dataset zerowaste --num_labels 0 --seed 1 --checkpoint path/to/checkpoint.pth
 ```
 
 ## Semi-supervised experiments
-We used the [official implementation](https://github.com/yassouali/CCT) of [CCT](https://arxiv.org/pdf/2003.09005.pdf)  with minor modification in data loading for our experiments. 
+We used the [official implementation](https://github.com/lorenmt/reco) of [ReCo](https://arxiv.org/abs/2104.04465)  with minor modification in data loading for our experiments. 
 
 ### Requirements
-* Python 3.7
-* pytorch >= 1.1.0
-* torchvision, PIL, OpenCV
+* Python 3.8
+* pytorch 1.8
 
 ### Data
-Please download and unzip the ZeroWaste-f and ZeroWaste-s for the semi-zupervised experiments. Then, the experiment config (e.g. configs/zerowaste_config.json) should be edited so that fields ```data_dir``` include the correct path to the corresponding dataset split. 
+Please download and unzip the ZeroWaste-f, ZeroWasteAug, and ZeroWaste-s for the semi-zupervised experiments. 
 
 ### Training
-To train the model from scratch with the hyperparameters used in our experiments, please download the initial checkpoint [here](https://github.com/yassouali/CCT/releases/download/v0.1/3x3resnet50-imagenet.pth) and put it to ```cct/models/backbones/pretrained/``` and use the following command:
+To train the model from scratch with the hyperparameters used in our experiments:
 
 ```
-cd cct
-python train_zerowaste.py -c configs/*needed_config*.json
-
-########### python3 train_zerowaste.py -c configs/zerowaste_config.json
+python reco_aug/train_semisup.py --dataset zerowaste --num_labels 60 --apply_aug classmix --apply_reco
 ```
-This command works for the semi-supervised setup, for the supervised experiment use ```configs/zerowaste_config_sup.json``` instead. 
 
 ### Evaluation
-The trained model checkpoints can be found [here](http://csr.bu.edu/ftp/recycle/models/cct/). The following command runs inference on the given data: 
+The trained model checkpoints can be found [here](http://csr.bu.edu/ftp/recycle/models/reco/reco_aug/). The following command runs inference on the given data: 
 
 ```
-cd cct
-python zerowaste_inference.py --config configs/*needed_config*.json --model path/to/checkpoint.pth --images /path/to/images/
+cd reco_aug
+python reco_aug/test_sup.py --dataset zerowaste --num_labels 0 --apply_aug classmix --apply_reco --checkpoint path/to/checkpoint.pth
 ```
 
-####### python3 zerowaste_inference.py --config config.json --model checkpoint.pth --images ../data/zerowaste-f/test
-
-## Generation of CAMs
-We used the [official implementation](https://github.com/eclique/RISE) of [RISE](https://arxiv.org/abs/1806.07421) by Vitali Petsiuk. 
+## Weakly-supervised experiments
+We used the [official implementation](https://github.com/OFRIN/PuzzleCAM) of [Puzzle-Cam](https://arxiv.org/abs/2101.11253)
 ### Requirements
-* python 3.7
-* pytorch 1.8
-* torchvision 
-* skimage
+* Python 3.8, PyTorch 1.7.0, and more in requirements.txt
+* CUDA 10.1, cuDNN 7.6.5
 
-Please download the ZeroWaste-w dataset for binary classification. A pretrained binary classifier used in our experiments can be found [here](http://csr.bu.edu/ftp/recycle/models/binary_classification/). [This notebook](rise/before_after_cams.ipynb) illustrates how the CAMs can be generated for outr dataset.
+Please download the ZeroWaste-w dataset for binary classification. A pretrained binary classifier used in our experiments can be found [here](http://csr.bu.edu/ftp/recycle/models/binary_classification/).
 
+### For Puzzle-Cam trained with 4-class image-level labels
+
+```
+cd puzzlecam_4_classes
+bash run.sh
+```
+### For Puzzle-Cam trained with binary before/after image-level labels
+
+```
+cd puzzlecam_binary
+bash run.sh
+```
 
 ## Citation
 Please cite our paper: 
 ```
 @article{zerowaste,
-  author =       {Dina Bashkirova, Ziliang Zhu, James Akl,    Fadi Alladkani, Ping Hu, Vitaly Ablavsky, Berk Calli, Sarah Adel Bargal and Kate Saenko},
+  author =       {Dina Bashkirova, Mohamed Abdelfattah, Ziliang Zhu, James Akl,    Fadi Alladkani, Ping Hu, Vitaly Ablavsky, Berk Calli, Sarah Adel Bargal and Kate Saenko},
   title =        {ZeroWaste dataset: Towards Automated Waste Recycling},
   howpublished = {arXiv preprint},
   year =         {2021}
