@@ -1,8 +1,0 @@
-numpy
-pillow
-cython
-git+https://github.com/lucasb-eyer/pydensecrf.git
-torch
-torchvision
-tqdm
-opencv-python
