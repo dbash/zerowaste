@@ -92,7 +92,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+.vscode
+.ipynb_checkpoints
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -146,3 +147,5 @@ venv.bak/
 *.pdf
 *.xlsx
 *.pkl
+
+commands.txt

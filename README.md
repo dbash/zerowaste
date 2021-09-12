@@ -44,7 +44,7 @@ We used the [official implementation](https://github.com/lorenmt/reco) of [ReCo]
 * pytorch 1.8
 
 ### Data
-Please download and unzip the ZeroWaste-f, ZeroWasteAug, and ZeroWaste-s for the semi-zupervised experiments. 
+Please download and unzip the ZeroWaste-f, ZeroWasteAug, and ZeroWaste-s (in reco_org/dataset and reco_aug/dataset) for the semi-zupervised experiments. 
 
 ### Training
 To train the model from scratch with the hyperparameters used in our experiments:
@@ -57,7 +57,6 @@ python reco_aug/train_semisup.py --dataset zerowaste --num_labels 60 --apply_aug
 The trained model checkpoints can be found [here](http://csr.bu.edu/ftp/recycle/models/reco/reco_aug/). The following command runs inference on the given data: 
 
 ```
-cd reco_aug
 python reco_aug/test_sup.py --dataset zerowaste --num_labels 0 --apply_aug classmix --apply_reco --checkpoint path/to/checkpoint.pth
 ```
 
@@ -87,7 +86,7 @@ Please cite our paper:
 ```
 @article{zerowaste,
   author =       {Dina Bashkirova, Mohamed Abdelfattah, Ziliang Zhu, James Akl,    Fadi Alladkani, Ping Hu, Vitaly Ablavsky, Berk Calli, Sarah Adel Bargal and Kate Saenko},
-  title =        {ZeroWaste dataset: Towards Automated Waste Recycling},
+  title =        {ZeroWaste: Towards Deformable Object Segmentation in Extreme Clutter},
   howpublished = {arXiv preprint},
   year =         {2021}
 }
