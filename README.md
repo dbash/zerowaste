@@ -1,5 +1,5 @@
 # ZeroWaste: Towards Deformable Object Segmentation in Extreme Clutter
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4899927.svg)](https://doi.org/10.5281/zenodo.4899927) <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" />
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5246013.svg)](https://doi.org/10.5281/zenodo.5246013) <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" />
 ![Image](images/recycling_figure_1_v3.png)
 This is the official repository of the ZeroWaste project [arxiv](https://arxiv.org/abs/2106.02740). Our ZeroWaste dataset distributed under 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"></a><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License </a>  can be found [here](https://zenodo.org/record/4899927).
