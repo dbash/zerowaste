@@ -1,4 +1,4 @@
-# ZeroWaste: Towards Deformable Object Segmentation in Extreme Clutter
+# ZeroWaste: Towards Deformable Object Segmentation in Cluttered Scenes
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5246013.svg)](https://doi.org/10.5281/zenodo.5246013) <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" />
 ![Image](images/recycling_figure_1_v3.png)
 This is the official repository of the ZeroWaste project [arxiv](https://arxiv.org/abs/2106.02740). Our ZeroWaste dataset distributed under 
@@ -86,9 +86,9 @@ Please cite our paper:
 ```
 @article{zerowaste,
   author =       {Dina Bashkirova, Mohamed Abdelfattah, Ziliang Zhu, James Akl,    Fadi Alladkani, Ping Hu, Vitaly Ablavsky, Berk Calli, Sarah Adel Bargal and Kate Saenko},
-  title =        {ZeroWaste: Towards Deformable Object Segmentation in Extreme Clutter},
-  howpublished = {arXiv preprint},
-  year =         {2021}
+  title =        {ZeroWaste Dataset: Towards Deformable Object Segmentation in Cluttered Scenes},
+  howpublished = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year =         {2022}
 }
 ```
 
