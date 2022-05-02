@@ -14,7 +14,7 @@ This is the official repository of the ZeroWaste project [arxiv](https://arxiv.o
 To train the supervised methods (DeeplabV3+ or Mask R-CNN), use the command below: 
 ```
 # train deeplab on ZeroWaste data
-python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot /path/to/zerowaste/data/ (optional) --resume OUTPUT_DIR /deeplab/outputs/*experiment_name* (optional) --MODEL.WEIGHTS /path/to/checkpoint.pth
+python deeplab/train_net.py --config-file deeplab/configs/zerowaste_config.yaml --dataroot /path/to/zerowaste/data/ (optional) --resume OUTPUT_DIR /deeplab/outputs/*experiment_name* (optional) MODEL.WEIGHTS /path/to/checkpoint.pth
 
 # train Mask R-CNN on ZeroWaste\TACO-zerowaste data
 python maskrcnn/train_net.py --config-file maskrcnn/configs/*config*.yaml (optional, only use if trained on TACO-zerowaste) --taco --dataroot /path/to/zerowaste/data/ (optional) --resume OUTPUT_DIR /maskrcnn/outputs/*experiment_name* (optional) --MODEL.WEIGHTS /path/to/checkpoint.pth
